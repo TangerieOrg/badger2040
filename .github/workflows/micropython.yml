@@ -112,12 +112,12 @@ jobs:
       shell: bash
       working-directory: micropython/lib/pico-sdk
       run: |
-        git apply "${{env.FIRMWARE_DIR}}/startup_overclock.patch"
+        git apply "${{env.FIRMWARE_DIR}}/startup_overclock.patch" || true
 
     - name: "HACK: CMakeLists.txt Disable C++ Exceptions Patch"
       shell: bash
       working-directory: micropython
-      run: git apply "${{env.FIRMWARE_DIR}}/micropython_nano_specs.patch"
+      run: git apply "${{env.FIRMWARE_DIR}}/micropython_nano_specs.patch" || true
 
     # Build firmware
     - name: Configure MicroPython
