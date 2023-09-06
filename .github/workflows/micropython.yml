@@ -7,7 +7,6 @@ on:
 env:
   MICROPYTHON_VERSION: 856e08b1931b88271816a2f60648f6ff332235b2
   PIMORONI_PICO_VERSION: v1.20.3
-  WORKFLOW_VERSION: v2
 
 jobs:
   deps:
@@ -19,9 +18,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{runner.workspace}}
-        key: workspace-micropython-${{env.MICROPYTHON_VERSION}}-${{env.WORKFLOW_VERSION}}
+        key: workspace-micropython-${{env.MICROPYTHON_VERSION}}
         restore-keys: |
-          workspace-micropython-${{env.MICROPYTHON_VERSION}}-${{env.WORKFLOW_VERSION}}
+          workspace-micropython-${{env.MICROPYTHON_VERSION}}
 
     # Check out MicroPython
     - name: Checkout MicroPython
@@ -54,42 +53,35 @@ jobs:
 
   build:
     needs: deps
-    name: Build ${{matrix.name}}
+    name: Build Firmware
     runs-on: [self-hosted, builder]
-    strategy:
-      matrix:
-        include:
-          - name: Badger 2040 W
-            shortname: badger2040w
-            board: PIMORONI_BADGER2040W
-            # 0x10000000 + (2*1024*1024) - (848*1024)
-            dir2uf2_fs_start: 269664256
-            dir2uf2_fs_size: 868352
 
     env:
-      RELEASE_FILE: pimoroni-${{matrix.shortname}}-${{github.event.release.tag_name || github.sha}}-micropython.uf2
-      RELEASE_FILE_WITH_OS: pimoroni-${{matrix.shortname}}-${{github.event.release.tag_name || github.sha}}-micropython-with-badger-os.uf2
+      RELEASE_FILE: badger2040w-${{github.sha}}-micropython.uf2
+      RELEASE_FILE_WITH_OS: badger2040w-${{github.sha}}-micropython-with-os.uf2
       FIRMWARE_DIR: "$GITHUB_WORKSPACE/badger2040/firmware"
-      BOARD_DIR: "$GITHUB_WORKSPACE/badger2040/firmware/${{matrix.board}}"
+      BOARD_DIR: "$GITHUB_WORKSPACE/badger2040/firmware/PIMORONI_BADGER2040W"
       BADGER_OS_DIR: "$GITHUB_WORKSPACE/badger2040/badger_os"
+      dir2uf2_fs_start: 269664256
+      dir2uf2_fs_size: 868352
 
     steps:
     - name: Compiler Cache
       uses: actions/cache@v3
       with:
         path: /home/runner/.ccache
-        key: ccache-micropython-${{matrix.shortname}}-${{github.ref}}-${{github.sha}}
+        key: ccache-micropython-${{github.ref}}-${{github.sha}}
         restore-keys: |
-          ccache-micropython-${{matrix.shortname}}-${{github.ref}}
-          ccache-micropython-${{matrix.shortname}}-
+          ccache-micropython-${{github.ref}}
+          ccache-micropython-
 
     - name: Workspace Cache
       uses: actions/cache@v3
       with:
         path: ${{runner.workspace}}
-        key: workspace-micropython-${{env.MICROPYTHON_VERSION}}-${{env.WORKFLOW_VERSION}}
+        key: workspace-micropython-${{env.MICROPYTHON_VERSION}}
         restore-keys: |
-          workspace-micropython-${{env.MICROPYTHON_VERSION}}-${{env.WORKFLOW_VERSION}}
+          workspace-micropython-${{env.MICROPYTHON_VERSION}}
 
     - uses: actions/checkout@v3
       with:
@@ -148,7 +140,7 @@ jobs:
       shell: bash
       run: |
         python3 -m pip install littlefs-python==0.4.0
-        ./dir2uf2/dir2uf2 --fs-start ${{matrix.dir2uf2_fs_start}} --fs-size ${{matrix.dir2uf2_fs_size}} --append-to micropython/ports/rp2/build/${{env.RELEASE_FILE}} --manifest ${{env.BOARD_DIR}}/uf2-manifest.txt --filename with-badger-os.uf2 ${{env.BADGER_OS_DIR}}/
+        ./dir2uf2/dir2uf2 --fs-start ${{env.dir2uf2_fs_start}} --fs-size ${{env.dir2uf2_fs_size}} --append-to micropython/ports/rp2/build/${{env.RELEASE_FILE}} --manifest ${{env.BOARD_DIR}}/uf2-manifest.txt --filename with-badger-os.uf2 ${{env.BADGER_OS_DIR}}/
 
     - name: Store .uf2 as artifact
       uses: actions/upload-artifact@v3
@@ -161,25 +153,3 @@ jobs:
       with:
         name: ${{env.RELEASE_FILE_WITH_OS}}
         path: ${{env.RELEASE_FILE_WITH_OS}}
-
-    - name: Upload .uf2
-      if: github.event_name == 'release'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      with:
-        asset_path: micropython/ports/rp2/build/${{env.RELEASE_FILE}}
-        upload_url: ${{github.event.release.upload_url}}
-        asset_name: ${{env.RELEASE_FILE}}
-        asset_content_type: application/octet-stream
-
-    - name: Upload .uf2 + Badger OS
-      if: github.event_name == 'release'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      with:
-        asset_path: ${{env.RELEASE_FILE_WITH_OS}}
-        upload_url: ${{github.event.release.upload_url}}
-        asset_name: ${{env.RELEASE_FILE_WITH_OS}}
-        asset_content_type: application/octet-stream
