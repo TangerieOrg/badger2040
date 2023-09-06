@@ -137,7 +137,7 @@ jobs:
       working-directory: micropython/ports/rp2
       run: |
         ccache --zero-stats || true
-        cmake --build build -j 2
+        cmake --build build
         ccache --show-stats || true
 
     - name: Rename .uf2 for artifact
