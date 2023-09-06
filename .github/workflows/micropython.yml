@@ -119,6 +119,11 @@ jobs:
       working-directory: micropython
       run: git apply "${{env.FIRMWARE_DIR}}/micropython_nano_specs.patch" || true
 
+    - name: "Test Path"
+      shell: bash
+      working-directory: micropython/ports/rp2
+      run: env && echo $PATH
+    
     # Build firmware
     - name: Configure MicroPython
       shell: bash
