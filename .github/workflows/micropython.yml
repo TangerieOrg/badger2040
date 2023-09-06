@@ -63,6 +63,7 @@ jobs:
       FIRMWARE_DIR: "$GITHUB_WORKSPACE/badger2040/firmware"
       BOARD_DIR: "$GITHUB_WORKSPACE/badger2040/firmware/PIMORONI_BADGER2040W"
       BADGER_OS_DIR: "$GITHUB_WORKSPACE/badger2040/badger_os"
+      PICO_TOOLCHAIN_PATH: "$HOME/pico/arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-eabi"
       dir2uf2_fs_start: 269664256
       dir2uf2_fs_size: 868352
 
@@ -129,7 +130,7 @@ jobs:
       shell: bash
       working-directory: micropython/ports/rp2
       run: |
-        cmake -S . -B build -DPICO_BUILD_DOCS=0 -DUSER_C_MODULES=${{env.BOARD_DIR}}/micropython.cmake -DMICROPY_BOARD_DIR=${{env.BOARD_DIR}} -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        cmake -S . -B build -DPICO_BUILD_DOCS=0 -DUSER_C_MODULES=${{env.BOARD_DIR}}/micropython.cmake -DMICROPY_BOARD_DIR=${{env.BOARD_DIR}} -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DPICO_TOOLCHAIN_PATH=${{env.PICO_TOOLCHAIN_PATH}}
 
     - name: Build MicroPython
       shell: bash
