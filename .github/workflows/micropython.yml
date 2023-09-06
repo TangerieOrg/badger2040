@@ -2,9 +2,7 @@ name: MicroPython Firmware
 
 on:
   push:
-  pull_request:
-  release:
-    types: [created]
+    branches: [ main ]
 
 env:
   MICROPYTHON_VERSION: 856e08b1931b88271816a2f60648f6ff332235b2
