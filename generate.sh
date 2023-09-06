@@ -1,0 +1,2 @@
+export BOARD_DIR=$(pwd)/firmware/PIMORONI_BADGER2040W
+cmake -S ../micropython/ports/rp2 -B ../micropython/ports/rp2/build -DPICO_BUILD_DOCS=0 -DUSER_C_MODULES=$BOARD_DIR/micropython.cmake -DMICROPY_BOARD_DIR=$BOARD_DIR -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
