@@ -11,7 +11,7 @@ env:
 
 jobs:
   deps:
-    runs-on: ubuntu-20.04
+    runs-on: [self-hosted, builder]
     name: Dependencies
     steps:
     - name: Workspace Cache
@@ -55,7 +55,7 @@ jobs:
   build:
     needs: deps
     name: Build ${{matrix.name}}
-    runs-on: ubuntu-20.04
+    runs-on: [self-hosted, builder]
     strategy:
       matrix:
         include:
