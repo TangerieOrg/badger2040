@@ -1,1 +1,1 @@
-cmake --build ../micropython/ports/rp2/build -- -j 8
+cmake --build ../micropython/ports/rp2/build
