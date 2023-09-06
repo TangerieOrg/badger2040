@@ -128,7 +128,7 @@ jobs:
       shell: bash
       working-directory: micropython/ports/rp2
       run: |
-        cmake -S . -B build -DPICO_BUILD_DOCS=0 -DUSER_C_MODULES=${{env.BOARD_DIR}}/micropython.cmake -DMICROPY_BOARD_DIR=${{env.BOARD_DIR}} -DMICROPY_BOARD=${{env.BOARD}} -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        cmake -S . -B build -DPICO_BUILD_DOCS=0 -DUSER_C_MODULES=${{env.BOARD_DIR}}/micropython.cmake -DMICROPY_BOARD_DIR=${{env.BOARD_DIR}} -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
     - name: Build MicroPython
       shell: bash
@@ -183,5 +183,3 @@ jobs:
         upload_url: ${{github.event.release.upload_url}}
         asset_name: ${{env.RELEASE_FILE_WITH_OS}}
         asset_content_type: application/octet-stream
-
-        # cmake -S . -B build -DPICO_BUILD_DOCS=0 -DUSER_C_MODULES=$BOARD_DIR/micropython.cmake -DMICROPY_BOARD_DIR=$BOARD_DIR -DMICROPY_BOARD=PICO_W -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
