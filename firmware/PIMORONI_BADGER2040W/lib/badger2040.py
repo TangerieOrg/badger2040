@@ -159,8 +159,8 @@ def sleep_for(minutes):
 
 
 class Badger2040():
-    def __init__(self):
-        self.display = PicoGraphics(DISPLAY_INKY_PACK)
+    def __init__(self, rotate=0):
+        self.display = PicoGraphics(DISPLAY_INKY_PACK, rotate=rotate)
         self._led = machine.PWM(machine.Pin(LED))
         self._led.freq(1000)
         self._led.duty_u16(0)
